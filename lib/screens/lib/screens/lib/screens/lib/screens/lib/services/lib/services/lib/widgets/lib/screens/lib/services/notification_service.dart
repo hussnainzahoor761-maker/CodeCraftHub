@@ -1,41 +1,20 @@
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
 class NotificationService {
-  final FlutterLocalNotificationsPlugin _notificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  static final NotificationService _instance = NotificationService._internal();
+  factory NotificationService() => _instance;
+  NotificationService._internal();
 
-  Future<void> initNotification() async {
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+  bool _notificationsEnabled = true;
 
-    const InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
+  bool get isEnabled => _notificationsEnabled;
 
-    await _notificationsPlugin.initialize(initializationSettings);
+  void setNotificationsEnabled(bool value) {
+    _notificationsEnabled = value;
   }
 
-  Future<void> showNotification({
-    int id = 0,
-    String? title,
-    String? body,
-  }) async {
-    const AndroidNotificationDetails androidDetails =
-        AndroidNotificationDetails(
-      'default_channel_id',
-      'Default Channel',
-      channelDescription: 'Course alert notifications',
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-
-    const NotificationDetails notificationDetails =
-        NotificationDetails(android: androidDetails);
-
-    await _notificationsPlugin.show(
-      id,
-      title,
-      body,
-      notificationDetails,
-    );
+  // Method to trigger local notifications
+  Future<void> showNotification(String title, String body) async {
+    if (_notificationsEnabled) {
+      print('[Notification Triggered] Title: $title | Body: $body');
+    }
   }
 }
